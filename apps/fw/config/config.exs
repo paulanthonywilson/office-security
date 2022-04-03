@@ -28,7 +28,7 @@ config :logger, backends: [RingLogger]
 
 case Mix.target() do
   :rpi0 ->
-    IO.inspect NERVES_APP
+    IO.inspect(NERVES_APP)
     config :nerves, :firmware, fwup_conf: "config/rpi0/fwup.conf"
 
   _ ->

@@ -8,6 +8,7 @@ defmodule OfficeSecWeb.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {Phoenix.PubSub, name: OfficeSec.PubSub},
       # Start the Telemetry supervisor
       OfficeSecWeb.Telemetry,
       # Start the Endpoint (http/https)

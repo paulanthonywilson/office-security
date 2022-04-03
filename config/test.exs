@@ -10,8 +10,5 @@ config :office_sec_web, OfficeSecWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-# In test we don't send emails.
-config :office_sec, OfficeSec.Mailer, adapter: Swoosh.Adapters.Test
-
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime

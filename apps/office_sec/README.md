@@ -1,3 +1,0 @@
-# OfficeSec
-
-**TODO: Add description**
