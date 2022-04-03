@@ -26,6 +26,15 @@ config :nerves, source_date_epoch: "1649015758"
 
 config :logger, backends: [RingLogger]
 
+case Mix.target() do
+  :rpi0 ->
+    IO.inspect NERVES_APP
+    config :nerves, :firmware, fwup_conf: "config/rpi0/fwup.conf"
+
+  _ ->
+    "only currently configured for rpi0"
+end
+
 if Mix.target() == :host or Mix.target() == :"" do
   import_config "host.exs"
 else
