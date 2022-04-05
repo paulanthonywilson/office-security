@@ -11,6 +11,5 @@ defmodule EventsTest do
     assert :ok == Events.subscribe(:my_events)
     Events.publish(:other_event, :an_event)
     refute_receive {:other_event, :an_event}
-
   end
 end

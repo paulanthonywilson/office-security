@@ -62,7 +62,9 @@ defmodule Fw.MixProject do
       # under the umbrella
 
       # other deps
-      {:office_sec_web, in_umbrella: true}
+      {:office_sec_web, in_umbrella: true},
+      {:events, in_umbrella: true},
+      {:ds18b20, in_umbrella: true}
     ]
   end
 
