@@ -3,7 +3,11 @@ defmodule Ds18b20.TemperatureReader do
   Takes care of reading the temperature via OneWire
   """
 
-  @devices_base "/sys/bus/w1/devices/"
+  @devices_base (if Mix.target() == :host do
+                   "../../fake/ds18b20"
+                 else
+                   "/sys/bus/w1/devices/"
+                 end)
 
   @temperature_regex ~r/crc=\w\w\s*(?<crc>\w+)$.*t=(?<t>\d+)$/sm
 
@@ -35,10 +39,11 @@ defmodule Ds18b20.TemperatureReader do
 
   defp parse_file({:ok, body}) do
     case Regex.named_captures(@temperature_regex, body) do
-      %{"t" => t, "crc" => "YES"}  ->
+      %{"t" => t, "crc" => "YES"} ->
         {:ok, to_celsius(t)}
-        %{"t" => _} ->
-          {:error, :crc_fail}
+
+      %{"t" => _} ->
+        {:error, :crc_fail}
 
       _ ->
         {:error, :bad_data}
