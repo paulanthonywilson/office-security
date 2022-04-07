@@ -3,19 +3,14 @@ defmodule Ds18b20.TemperatureReader do
   Takes care of reading the temperature via OneWire
   """
 
-  @devices_base (if Mix.target() == :host do
-                   "../../fake/ds18b20"
-                 else
-                   "/sys/bus/w1/devices/"
-                 end)
-
   @temperature_regex ~r/crc=\w\w\s*(?<crc>\w+)$.*t=(?<t>\d+)$/sm
 
   @doc """
   Finds the device file
   """
-  @spec device_file() :: {:ok, String.t()} | {:error, :enoent | :no_device | :multiple_devices}
-  def device_file(dir \\ @devices_base) do
+  @spec device_file(base_dir :: String.t()) ::
+          {:ok, String.t()} | {:error, :enoent | :no_device | :multiple_devices}
+  def device_file(dir) do
     with {:ok, candidate_devices} <- File.ls(dir) do
       find_device(dir, candidate_devices)
     end
@@ -31,6 +26,8 @@ defmodule Ds18b20.TemperatureReader do
     end
   end
 
+  @spec read_temperature(String.t()) ::
+          {:ok, Decimal.t()} | {:error, :crc_fail | :bad_data | :enoent}
   def read_temperature(device_file) do
     device_file
     |> File.read()

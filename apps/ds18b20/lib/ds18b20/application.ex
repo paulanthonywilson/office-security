@@ -1,6 +1,4 @@
 defmodule Ds18b20.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
@@ -8,12 +6,9 @@ defmodule Ds18b20.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Ds18b20.Worker.start_link(arg)
-      # {Ds18b20.Worker, arg}
+      Ds18b20.TemperatureServer
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Ds18b20.Supervisor]
     Supervisor.start_link(children, opts)
   end

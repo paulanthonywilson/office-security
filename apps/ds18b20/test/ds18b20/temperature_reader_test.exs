@@ -2,18 +2,9 @@ defmodule Ds18b20.TemperatureReaderTest do
   use ExUnit.Case
   alias Ds18b20.TemperatureReader
 
-  setup do
-    base_dir = Path.join(System.tmp_dir!(), "tmp#{:rand.uniform()}")
+  import Ds18b20.DeviceFile
 
-    File.mkdir_p!(base_dir)
-    base_dir |> Path.join("bystander-file") |> File.touch!()
-
-    on_exit(fn ->
-      File.rm_rf!(base_dir)
-    end)
-
-    {:ok, base_dir: base_dir}
-  end
+  setup :setup_one_wire_directory
 
   describe "find the device file" do
     test "error if the base directory is totally missing" do
@@ -25,8 +16,8 @@ defmodule Ds18b20.TemperatureReaderTest do
     end
 
     test "error if the base directory contains multiple 28-* dirs", %{base_dir: base_dir} do
-      base_dir |> Path.join("28-abc") |> File.mkdir!()
-      base_dir |> Path.join("28-def") |> File.mkdir!()
+      create_device(base_dir, "abc")
+      create_device(base_dir, "def")
       assert {:error, :multiple_devices} = TemperatureReader.device_file(base_dir)
     end
 
@@ -39,12 +30,7 @@ defmodule Ds18b20.TemperatureReaderTest do
   end
 
   describe "reading the device file" do
-    setup %{base_dir: base_dir} do
-      dir = Path.join(base_dir, "28-abcd")
-      device_file = Path.join(dir, "w1-slave")
-      File.mkdir!(dir)
-      {:ok, device_file: device_file}
-    end
+    setup :setup_device
 
     test "error if the file does not exist", %{device_file: device_file} do
       assert {:error, :enoent} == TemperatureReader.read_temperature(device_file)
@@ -56,24 +42,14 @@ defmodule Ds18b20.TemperatureReaderTest do
     end
 
     test "gets temperature from valid file", %{device_file: device_file} do
-      content = """
-      e3 00 4b 46 7f ff 0c 10 7e : crc=7e YES
-      e3 00 4b 46 7f ff 0c 10 7e t=14187
-      """
-
-      File.write!(device_file, content)
+      write_valid_temperature(device_file, "14188")
 
       assert {:ok, %Decimal{} = temperature} = TemperatureReader.read_temperature(device_file)
-      assert Decimal.equal?("14.187", temperature)
+      assert Decimal.equal?("14.188", temperature)
     end
 
     test "error if crc is not valid", %{device_file: device_file} do
-      content = """
-      e3 00 4b 46 7f ff 0c 10 7e : crc=7e NO
-      e3 00 4b 46 7f ff 0c 10 7e t=14187
-      """
-
-      File.write!(device_file, content)
+      write_crc_fail_temperature(device_file)
 
       assert {:error, :crc_fail} = TemperatureReader.read_temperature(device_file)
     end
