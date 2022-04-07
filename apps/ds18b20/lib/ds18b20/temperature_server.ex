@@ -7,7 +7,7 @@ defmodule Ds18b20.TemperatureServer do
   alias Ds18b20.TemperatureReader
 
   @devices_base (if Mix.target() == :host do
-                   "../../fake/ds18b20"
+                   "#{__DIR__}/../../../../fake/ds18b20"
                  else
                    "/sys/bus/w1/devices/"
                  end)

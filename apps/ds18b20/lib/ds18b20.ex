@@ -1,18 +1,15 @@
 defmodule Ds18b20 do
   @moduledoc """
-  Documentation for `Ds18b20`.
+  Temperatue reading for`Ds18b20`.
   """
+
+  alias Ds18b20.TemperatureServer
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Ds18b20.hello()
-      :world
-
+  The latest temperature (refreshed every minute) from
+  the Ds18b20 device
   """
-  def hello do
-    :world
+  def read do
+    TemperatureServer.read()
   end
 end
