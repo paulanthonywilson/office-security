@@ -45,6 +45,36 @@ defmodule Ds18b20.TemperatureServerTest do
     end
   end
 
+  describe "subscribe for updates" do
+    setup :setup_device
+
+    setup %{device_file: device_file} = ctx do
+      write_valid_temperature(device_file, "12345")
+      pid = start_server(ctx)
+      TemperatureServer.read(pid)
+      {:ok, pid: pid}
+    end
+
+    test "gets notification with latest temperature on subscription", %{pid: pid} do
+      assert :ok = TemperatureServer.subscribe(pid)
+      assert_receive {:ds18b20_temperature, {:ok, temp}}
+      assert Decimal.equal?("12.345", temp)
+    end
+
+    test "gets updates on temperature update", %{pid: pid, device_file: device_file} do
+      :ok = TemperatureServer.subscribe(pid)
+      assert_receive {:ds18b20_temperature, _}
+
+      write_valid_temperature(device_file, "13321")
+      send(pid, :read_temperature)
+
+      assert {:ok, value} = TemperatureServer.read(pid)
+      assert Decimal.equal?("13.321", value)
+      assert_receive {:ds18b20_temperature, {:ok, temp}}
+      assert Decimal.equal?("13.321", temp)
+    end
+  end
+
   defp start_server(%{base_dir: base_dir}) do
     {:ok, pid} = TemperatureServer.start_link(device_base: base_dir, use_name?: false)
     pid

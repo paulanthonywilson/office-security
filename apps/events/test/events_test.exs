@@ -7,6 +7,13 @@ defmodule EventsTest do
     assert_receive {:my_events, :an_event}
   end
 
+  test "receives one, and only one, notification per publication" do
+    assert :ok == Events.subscribe(:my_events)
+    Events.publish(:my_events, :an_event)
+    assert_receive {:my_events, :an_event}
+    refute_receive {:my_events, :an_event}
+  end
+
   test "only receives events on topics to which the process has subscribed" do
     assert :ok == Events.subscribe(:my_events)
     Events.publish(:other_event, :an_event)
