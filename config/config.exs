@@ -3,7 +3,8 @@ import Config
 # Configures the endpoint
 config :office_sec_web, OfficeSecWeb.Endpoint,
   url: [host: "localhost"],
-  heck_origin: false,
+  http: [port: 4000],
+  check_origin: false,
   render_errors: [view: OfficeSecWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: OfficeSec.PubSub,
   server: true,
@@ -23,6 +24,7 @@ config :esbuild,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
