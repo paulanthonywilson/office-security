@@ -10,9 +10,9 @@ config :office_sec_web, OfficeSecWeb.Endpoint,
   secret_key_base: "L4INDNUVGryF10QAXsAYJfMzkhtWn0xb27e7zICtsYmpZb+Z4psgx6olJeif74en",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
-
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

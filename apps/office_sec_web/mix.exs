@@ -49,6 +49,7 @@ defmodule OfficeSecWeb.MixProject do
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
+      {:tailwind, "~> 0.1.5", runtime: Mix.env() == :dev},
       {:ds18b20, in_umbrella: true}
     ]
   end
@@ -59,7 +60,7 @@ defmodule OfficeSecWeb.MixProject do
   defp aliases do
     [
       setup: ["deps.get"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end
 end
