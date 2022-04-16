@@ -34,18 +34,18 @@ defmodule OfficeSecWeb.MainLive do
     |> Decimal.to_string()
   end
 
-  defp format_time(""), do: ""
-
-  defp format_time(datetime) do
-    Calendar.strftime(datetime, "%H:%M:%S")
-  end
-
   defp format_temperature({:error, reason}) do
     inspect(reason)
   end
 
   defp format_temperature(message) when is_binary(message) do
     message
+  end
+
+  defp format_time(""), do: ""
+
+  defp format_time(datetime) do
+    Calendar.strftime(datetime, "%H:%M:%S")
   end
 
   def handle_info({:ds18b20_temperature, temperature}, socket) do

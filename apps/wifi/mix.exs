@@ -26,7 +26,7 @@ defmodule Wifi.MixProject do
 
   defp deps do
     [
-      {:circuits_gpio, "~> 0.4.6"}
+      {:circuits_gpio, "~> 1.0.0"}
     ] ++ deps(Mix.target())
   end
 

@@ -64,7 +64,8 @@ defmodule Fw.MixProject do
       {:office_sec_web, in_umbrella: true},
       {:events, in_umbrella: true},
       {:ds18b20, in_umbrella: true},
-      {:wifi, in_umbrella: true}
+      {:wifi, in_umbrella: true},
+      {:movement, in_umbrella: true}
     ]
   end
 
