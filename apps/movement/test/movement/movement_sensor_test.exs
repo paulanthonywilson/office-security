@@ -7,16 +7,16 @@ defmodule Movement.MovementSensorTest do
       :ok = MovementSensor.subscribe()
     end
 
-    test "broadcasts movement detected" do
-      assert {:noreply, %{last_movement: {:movement_detected, %DateTime{}}}} =
-               MovementSensor.handle_info({:circuits_gpio, 17, :_, 1}, %{last_movement: nil})
+    test "broadcasts and saves time when movement detected" do
+      assert {:noreply, %{last_detected_time: %DateTime{}}} =
+               MovementSensor.handle_info({:circuits_gpio, 17, :_, 1}, %{last_detected_time: nil})
 
       assert_receive {:movement, {:movement_detected, %DateTime{} = _timestamp}}
     end
 
-    test "no broadcast when movement down" do
-      assert {:noreply, %{last_movement: {:movement_stop, %DateTime{}}}} =
-               MovementSensor.handle_info({:circuits_gpio, 17, :_, 0}, %{last_movement: nil})
+    test "broadcasts but does not save time" do
+      assert {:noreply, %{last_detected_time: nil}} =
+               MovementSensor.handle_info({:circuits_gpio, 17, :_, 0}, %{last_detected_time: nil})
 
       assert_receive {:movement, {:movement_stop, %DateTime{} = _timestamp}}
     end
@@ -24,6 +24,6 @@ defmodule Movement.MovementSensorTest do
 
   test "subscribe also sends the last event" do
     :ok = MovementSensor.subscribe()
-    assert_receive {:movement, _}
+    assert_receive {:movement, {:movement_detected, _}}
   end
 end

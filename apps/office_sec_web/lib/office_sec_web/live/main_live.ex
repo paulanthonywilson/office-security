@@ -15,7 +15,7 @@ defmodule OfficeSecWeb.MainLive do
       Movement.movement_subscribe()
     end
 
-    {:ok, assign(socket, temperature: "starting ...", last_update: "", last_movement: "unknown")}
+    {:ok, assign(socket, temperature: "starting ...", last_update: "", last_movement: nil)}
   end
 
   def render(assigns) do
@@ -38,10 +38,6 @@ defmodule OfficeSecWeb.MainLive do
 
     """
   end
-
-  # defp format_date_time(datetime) do
-  #   Calendar.strftime(datetime, "%H:%M:%S %d/%m/%Y")
-  # end
 
   def handle_info({:ds18b20_temperature, temperature}, socket) do
     {:noreply, assign(socket, temperature: temperature, last_update: DateTime.utc_now())}

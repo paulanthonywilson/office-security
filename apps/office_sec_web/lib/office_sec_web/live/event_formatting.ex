@@ -56,18 +56,16 @@ defmodule OfficeSecWeb.EventFormatting do
   Formats datetimes to a time and date
   eg
 
-  Strings (for when no event received yet), as-iss
+  `nil` (for when no event received yet), as "none"
 
-  iex> format_date_time("But oh! that dark romantic chasm")
-  "But oh! that dark romantic chasm"
+  iex> format_date_time(nil)
+  "none"
 
   Shows time then date if provided
   iex> format_date_time(~U[2011-10-09 03:04:05Z])
   "03:04:05 on 2011-10-09 (UTC)"
   """
-  def format_date_time(text) when is_binary(text) do
-    text
-  end
+  def format_date_time(nil), do: "none"
 
   def format_date_time(datetime) do
     Calendar.strftime(datetime, "%H:%M:%S on %Y-%m-%d (UTC)")
