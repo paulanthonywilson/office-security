@@ -7,7 +7,7 @@ defmodule Movement do
   @doc """
 
   """
-  def movement_subscribeh do
+  def movement_subscribe do
     MovementSensor.subscribe()
   end
 end
