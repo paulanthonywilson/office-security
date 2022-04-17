@@ -5,13 +5,17 @@ defmodule OfficeSecWeb.MainLive do
 
   use OfficeSecWeb, :live_view
 
+  import OfficeSecWeb.EventFormatting
+
+  require Logger
+
   def mount(_params, _session, socket) do
     if connected?(socket) do
       Ds18b20.subscribe()
       Movement.movement_subscribe()
     end
 
-    {:ok, assign(socket, temperature: "starting ...", last_update: "", last_movement: "-")}
+    {:ok, assign(socket, temperature: "starting ...", last_update: "", last_movement: "unknown")}
   end
 
   def render(assigns) do
@@ -35,43 +39,20 @@ defmodule OfficeSecWeb.MainLive do
     """
   end
 
-  defp format_temperature({:ok, %Decimal{} = temp}) do
-    temp
-    |> Decimal.round(1)
-    |> Decimal.to_string()
-  end
-
-  defp format_temperature({:error, reason}) do
-    inspect(reason)
-  end
-
-  defp format_temperature(message) when is_binary(message) do
-    message
-  end
-
-
-
-  defp format_time(t) when is_binary(t), do: t
-  defp format_time(datetime) do
-    Calendar.strftime(datetime, "%H:%M:%S")
-  end
-
-
-  defp format_date_time(t) when is_binary(t), do: t
-  defp format_date_time(datetime) do
-    Calendar.strftime(datetime, "%H:%M:%S %d/%m/%Y")
-  end
+  # defp format_date_time(datetime) do
+  #   Calendar.strftime(datetime, "%H:%M:%S %d/%m/%Y")
+  # end
 
   def handle_info({:ds18b20_temperature, temperature}, socket) do
     {:noreply, assign(socket, temperature: temperature, last_update: DateTime.utc_now())}
   end
 
-  def handle_info({:movement, :movement_detected}, socket) do
-    {:noreply, assign(socket, last_movement: DateTime.utc_now())}
+  def handle_info({:movement, {:movement_detected, datetime}}, socket) do
+    {:noreply, assign(socket, last_movement: datetime)}
   end
 
   def handle_info(event, socket) do
-    IO.inspect(event, label: :handle_info)
+    Logger.debug(fn -> "MainLive event unhandled: #{inspect(event)}" end)
     {:noreply, socket}
   end
 end

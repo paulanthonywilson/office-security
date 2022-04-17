@@ -43,7 +43,7 @@ defmodule Ds18b20.TemperatureServer do
   @spec subscribe(atom | pid) :: :ok
   def subscribe(server \\ @name) do
     Events.subscribe(@topic)
-    Events.publish(@topic, read(server))
+    Events.send_self(@topic, read(server))
   end
 
   def init(device_base) do

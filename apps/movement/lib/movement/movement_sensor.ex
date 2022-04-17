@@ -23,7 +23,7 @@ defmodule Movement.MovementSensor do
   def init(_) do
     {:ok, sensor} = GPIO.open(@pin, :input)
     :ok = GPIO.set_interrupts(sensor, :both)
-    {:ok, %{sensor: sensor}}
+    {:ok, %{sensor: sensor, last_movement: nil}}
   end
 
   @doc """
@@ -31,33 +31,25 @@ defmodule Movement.MovementSensor do
   """
   def subscribe do
     Events.subscribe(@topic)
+    last_movement = GenServer.call(@name, :last_movement)
+    Events.send_self(@topic, last_movement)
   end
 
-  def sensor_ref do
-    GenServer.call(@name, :sensor_ref)
-  end
-
-  def handle_call(:sensor_ref, _, %{sensor: sensor} = s) do
-    {:reply, sensor, s}
+  def handle_call(:last_movement, _, %{last_movement: last_movement} = s) do
+    {:reply, last_movement, s}
   end
 
   def handle_info({:circuits_gpio, @pin, _, direction}, s) do
     Logger.debug(fn -> "Sensor change: #{direction}" end)
-    handle_sensor_state_change(direction)
-    {:noreply, s}
+    event = if direction == 1, do: :movement_detected, else: :movement_stop
+    last_movement = {event, DateTime.utc_now()}
+    Events.publish(@topic, last_movement)
+    {:noreply, %{s | last_movement: last_movement}}
   end
 
   def handle_info(unknown, s) do
     Logger.debug(fn -> "Uknown movement message: #{inspect(unknown)}" end)
 
     {:noreply, s}
-  end
-
-  defp handle_sensor_state_change(1) do
-    Events.publish(@topic, :movement_detected)
-  end
-
-  defp handle_sensor_state_change(0) do
-    Events.publish(@topic, :movement_stop)
   end
 end
