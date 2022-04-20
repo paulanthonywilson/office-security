@@ -43,8 +43,10 @@ defmodule Ds18b20.TemperatureServer do
   @spec subscribe(atom | pid) :: :ok
   def subscribe(server \\ @name) do
     Events.subscribe(@topic)
-    Events.send_self(@topic, read(server))
+    send(self(), server |> read() |> event())
+    :ok
   end
+
 
   def init(device_base) do
     case TemperatureReader.device_file(device_base) do
@@ -69,7 +71,7 @@ defmodule Ds18b20.TemperatureServer do
   def handle_info(:read_temperature, %{device: device} = s) do
     schedule_next_read()
     temp = TemperatureReader.read_temperature(device)
-    Events.publish(@topic, temp)
+    Events.publish(@topic, event(temp))
     {:noreply, Map.put(s, :value, temp)}
   end
 
@@ -84,4 +86,5 @@ defmodule Ds18b20.TemperatureServer do
   defp schedule_next_read do
     Process.send_after(self(), :read_temperature, @read_every)
   end
+  defp event(temperature), do: {:ds18b20_temperature, temperature}
 end

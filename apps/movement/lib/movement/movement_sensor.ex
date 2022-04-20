@@ -32,7 +32,8 @@ defmodule Movement.MovementSensor do
   def subscribe do
     Events.subscribe(@topic)
     last_detected_time = GenServer.call(@name, :last_detected_time)
-    Events.send_self(@topic, {:movement_detected, last_detected_time})
+    send(self(), event(:movement_detected, last_detected_time))
+    :ok
   end
 
   def handle_call(:last_detected_time, _, %{last_detected_time: last_detected_time} = s) do
@@ -42,13 +43,13 @@ defmodule Movement.MovementSensor do
   def handle_info({:circuits_gpio, @pin, _, 1}, s) do
     Logger.debug("movement detected")
     last_detected_time = DateTime.utc_now()
-    Events.publish(@topic, {:movement_detected, last_detected_time})
+    Events.publish(@topic, event(:movement_detected, last_detected_time))
     {:noreply, %{s | last_detected_time: last_detected_time}}
   end
 
   def handle_info({:circuits_gpio, @pin, _, 0}, s) do
     Logger.debug("movement detection stop")
-    Events.publish(@topic, {:movement_stop, DateTime.utc_now()})
+    Events.publish(@topic, event(:movement_stop, DateTime.utc_now()))
     {:noreply, s}
   end
 
@@ -56,5 +57,9 @@ defmodule Movement.MovementSensor do
     Logger.debug(fn -> "Uknown movement message: #{inspect(unknown)}" end)
 
     {:noreply, s}
+  end
+
+  defp event(change_type, timestamp) do
+    {:movement, {change_type, timestamp}}
   end
 end

@@ -21,7 +21,7 @@ defmodule Events do
   @spec publish(any, any) :: :ok
   def publish(topic, event) do
     Registry.dispatch(EventsRegistry, topic, fn entries ->
-      for {pid, _} <- entries, do: publish_to_process(pid, topic, event)
+      for {pid, _} <- entries, do: send(pid, event)
     end)
 
     :ok
@@ -33,7 +33,6 @@ defmodule Events do
   """
   @spec send_self(topic :: any, event :: any) :: :ok
   def send_self(topic, event) do
-    publish_to_process(self(), topic, event)
     :ok
   end
 

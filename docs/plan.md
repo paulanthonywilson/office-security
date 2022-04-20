@@ -17,6 +17,7 @@ Box
 * Detect office becomes occupied
 * Server connection
 * Settings persistence
+* Camera connection
 
 Server
 
