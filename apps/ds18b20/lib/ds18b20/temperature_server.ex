@@ -14,15 +14,12 @@ defmodule Ds18b20.TemperatureServer do
 
   @name __MODULE__
   @read_every :timer.seconds(60)
-  @topic :ds18b20_temperature
 
   def start_link(opts) do
     device_base = Keyword.get(opts, :device_base, @devices_base)
-    use_name? = Keyword.get(opts, :use_name?, true)
+    name = Keyword.get(opts, :name, @name)
 
-    otp_opts = if use_name?, do: [name: @name], else: []
-
-    GenServer.start_link(__MODULE__, device_base, otp_opts)
+    GenServer.start_link(__MODULE__, {device_base, name}, name: name)
   end
 
   @doc """
@@ -42,36 +39,36 @@ defmodule Ds18b20.TemperatureServer do
   """
   @spec subscribe(atom | pid) :: :ok
   def subscribe(server \\ @name) do
-    Events.subscribe(@topic)
-    send(self(), server |> read() |> event())
-    :ok
+    topic = GenServer.call(server, :subscribing)
+    Events.subscribe(topic)
   end
 
+  def init({device_base, topic}) do
+    state =
+      case TemperatureReader.device_file(device_base) do
+        {:error, :enoent} ->
+          %{one_wire_enabled: false}
 
-  def init(device_base) do
-    case TemperatureReader.device_file(device_base) do
-      {:error, :enoent} ->
-        {:ok, %{one_wire_enabled: false}}
+        {:ok, device} ->
+          schedule_next_read()
 
-      {:ok, device} ->
-        schedule_next_read()
+          %{
+            one_wire_enabled: true,
+            device: device,
+            value: TemperatureReader.read_temperature(device)
+          }
 
-        {:ok,
-         %{
-           one_wire_enabled: true,
-           device: device,
-           value: TemperatureReader.read_temperature(device)
-         }}
+        {:error, _} = err ->
+          %{one_wire_enabled: true, value: err}
+      end
 
-      {:error, _} = err ->
-        {:ok, %{one_wire_enabled: true, value: err}}
-    end
+    {:ok, Map.put(state, :topic, topic)}
   end
 
-  def handle_info(:read_temperature, %{device: device} = s) do
+  def handle_info(:read_temperature, %{device: device, topic: topic} = s) do
     schedule_next_read()
     temp = TemperatureReader.read_temperature(device)
-    Events.publish(@topic, event(temp))
+    Events.publish(topic, event(temp))
     {:noreply, Map.put(s, :value, temp)}
   end
 
@@ -83,8 +80,14 @@ defmodule Ds18b20.TemperatureServer do
     {:reply, value, s}
   end
 
+  def handle_call(:subscribing, {caller, _}, %{topic: topic,  value: value} = s) do
+    send(caller, event(value))
+    {:reply, topic, s}
+  end
+
   defp schedule_next_read do
     Process.send_after(self(), :read_temperature, @read_every)
   end
+
   defp event(temperature), do: {:ds18b20_temperature, temperature}
 end

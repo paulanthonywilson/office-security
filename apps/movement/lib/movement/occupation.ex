@@ -15,6 +15,4 @@ defmodule Movement.Occupation do
   def init(_) do
     {:ok, %{}}
   end
-
-
 end

@@ -4,7 +4,7 @@ defmodule Movement.OccupationTest do
 
   setup do
     {:ok, pid} = Occupation.start_link(name: self() |> inspect() |> String.to_atom())
-		
+
     {:ok, pid: pid}
   end
 

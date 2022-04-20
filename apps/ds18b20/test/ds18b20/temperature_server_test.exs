@@ -8,7 +8,7 @@ defmodule Ds18b20.TemperatureServerTest do
 
   describe "startup errors" do
     test "returns bad one wire error" do
-      assert {:ok, pid} = TemperatureServer.start_link(device_base: "blah", use_name?: false)
+      assert {:ok, pid} = TemperatureServer.start_link(device_base: "blah", name: generate_name())
       assert {:error, :bad_one_wire} == TemperatureServer.read(pid)
     end
 
@@ -75,8 +75,12 @@ defmodule Ds18b20.TemperatureServerTest do
     end
   end
 
+  defp generate_name do
+    self() |> inspect() |> String.to_atom()
+  end
+
   defp start_server(%{base_dir: base_dir}) do
-    {:ok, pid} = TemperatureServer.start_link(device_base: base_dir, use_name?: false)
+    {:ok, pid} = TemperatureServer.start_link(device_base: base_dir, name: generate_name())
     pid
   end
 end
