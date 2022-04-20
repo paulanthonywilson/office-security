@@ -39,7 +39,7 @@ defmodule LedStatus.SetsLedStatus do
     case @wifi_address.wlan0_address() do
       nil -> @onboard_led.flash_alarmingly()
       @vintagenet_wizard_gateway_ip -> @onboard_led.flash_languidly()
-      _ -> @onboard_led.turn_off()
+      _ -> check_connection_status()
     end
 
     send(self(), :schedule_next_check)
@@ -49,5 +49,13 @@ defmodule LedStatus.SetsLedStatus do
   def handle_info(:schedule_next_check, state) do
     Process.send_after(self(), :check_addresses, @check_every)
     {:noreply, state}
+  end
+
+  defp check_connection_status do
+    if @wifi_address.connection_status == :internet do
+      @onboard_led.turn_off()
+    else
+      @onboard_led.flash_heartbeat()
+    end
   end
 end

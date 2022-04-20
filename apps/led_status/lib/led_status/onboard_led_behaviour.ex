@@ -19,4 +19,9 @@ defmodule LedStatus.OnboardLedBehaviour do
   You'll never guess what this does.
   """
   @callback turn_off :: :ok
+
+  @doc """
+  Two rapid flashes, then a pause etc...
+  """
+  @callback flash_heartbeat :: :ok
 end

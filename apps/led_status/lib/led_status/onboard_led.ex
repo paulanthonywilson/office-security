@@ -20,4 +20,9 @@ defmodule LedStatus.OnboardLed do
   def turn_off() do
     Nerves.Leds.set(@led_addr, false)
   end
+
+  @impl true
+  def flash_heartbeat do
+    Nerves.Leds.set(@led_addr, :heartbeat)
+  end
 end

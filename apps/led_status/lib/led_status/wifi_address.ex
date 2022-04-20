@@ -8,7 +8,7 @@ defmodule LedStatus.WifiAddress do
   """
   @behaviour LedStatus.WifiAddressBehaviour
 
-  @spec wlan0_address :: :inet.ip_address() | nil
+  @impl true
   def wlan0_address do
     with {:ok, addresses} <- :inet.getifaddrs() do
       wlan0_address(addresses)
@@ -21,6 +21,12 @@ defmodule LedStatus.WifiAddress do
     addresses
     |> Enum.find(fn {interface, _} -> 'wlan0' == interface end)
     |> extract_ip4_address()
+  end
+
+
+  @impl true
+  def connection_status do
+   apply(VintageNet, :get, [["interface", "wlan0", "connection"]])
   end
 
   defp extract_ip4_address({'wlan0', details}) do

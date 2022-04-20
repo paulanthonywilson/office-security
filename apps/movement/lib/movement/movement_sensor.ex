@@ -16,22 +16,23 @@ defmodule Movement.MovementSensor do
 
   @pin 17
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, {}, name: @name)
+  def start_link(opts) do
+    name = Keyword.get(opts, :name, @name)
+    GenServer.start_link(__MODULE__, name, name: name)
   end
 
-  def init(_) do
+  def init(topic) do
     {:ok, sensor} = GPIO.open(@pin, :input)
     :ok = GPIO.set_interrupts(sensor, :both)
-    {:ok, %{sensor: sensor, last_detected_time: nil}}
+    {:ok, %{sensor: sensor, last_detected_time: nil, topic: topic}}
   end
 
   @doc """
   Subscribe to receive movement notifications
   """
-  def subscribe do
+  def subscribe(server \\ @name) do
     Events.subscribe(@topic)
-    last_detected_time = GenServer.call(@name, :last_detected_time)
+    last_detected_time = GenServer.call(server, :last_detected_time)
     send(self(), event(:movement_detected, last_detected_time))
     :ok
   end
