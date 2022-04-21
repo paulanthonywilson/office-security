@@ -36,6 +36,17 @@ defmodule Movement.OccupationTest do
     refute Process.read_timer(timer_ref)
   end
 
+  test "first timer cancelled if second movement stop event received", %{pid: pid} do
+    send(pid, {:movement, {:movement_stop, @some_time}})
+    %{occupation_timer: timer1} = :sys.get_state(pid)
+
+    send(pid, {:movement, {:movement_stop, @some_time}})
+    %{occupation_timer: timer2} = :sys.get_state(pid)
+
+    refute Process.read_timer(timer1)
+    assert Process.read_timer(timer2)
+  end
+
   test "on movement detected, becomes occupied", %{pid: pid} do
     send(pid, {:movement, {:movement_detected, @some_time}})
     assert Occupation.occupied?(pid)
@@ -69,6 +80,14 @@ defmodule Movement.OccupationTest do
     send(pid, {:movement, {:movement_detected, timestamp}})
 
     assert_receive {:occupied, {true, ^timestamp}}
+  end
+
+  test "does not become occupied when already occupied", %{pid: pid} do
+    send(pid, {:movement, {:movement_detected, @some_time}})
+    Occupation.subscribe(pid)
+    assert_receive {:occupied, _}
+    send(pid, {:movement, {:movement_detected, @some_time}})
+    refute_receive {:occupied, _}
   end
 
   test "on becoming unoccupied, the timestamp is that the occupation stopped", %{pid: pid} do

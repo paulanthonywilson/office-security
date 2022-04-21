@@ -64,8 +64,13 @@ defmodule OfficeSecWeb.EventFormatting do
   Shows time then date if provided
   iex> format_date_time(~U[2011-10-09 03:04:05Z])
   "03:04:05 on 2011-10-09 (UTC)"
+
+  Returns a string if a string
+  iex> format_date_time("hi there")
+  "hi there"
   """
   def format_date_time(nil), do: "none"
+  def format_date_time(text) when is_binary(text), do: text
 
   def format_date_time(datetime) do
     Calendar.strftime(datetime, "%H:%M:%S on %Y-%m-%d (UTC)")

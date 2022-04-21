@@ -49,9 +49,17 @@ defmodule Movement.Occupation do
     {:reply, topic, s}
   end
 
-  def handle_info({:movement, {:movement_stop, timestamp}}, s) do
+  def handle_info(
+        {:movement, {:movement_stop, timestamp}},
+        %{occupation_timer: existing_timer} = s
+      ) do
+    if existing_timer, do: Process.cancel_timer(existing_timer)
     timer_ref = Process.send_after(self(), {:occupation_timeout, timestamp}, @occupation_timeout)
     {:noreply, %{s | occupation_timer: timer_ref}}
+  end
+
+  def handle_info({:movement, {:movement_detected, _}}, %{occupied?: true} = s) do
+    {:noreply, s}
   end
 
   def handle_info(
