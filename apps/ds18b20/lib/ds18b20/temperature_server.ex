@@ -80,7 +80,7 @@ defmodule Ds18b20.TemperatureServer do
     {:reply, value, s}
   end
 
-  def handle_call(:subscribing, {caller, _}, %{topic: topic,  value: value} = s) do
+  def handle_call(:subscribing, {caller, _}, %{topic: topic, value: value} = s) do
     send(caller, event(value))
     {:reply, topic, s}
   end

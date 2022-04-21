@@ -23,10 +23,9 @@ defmodule LedStatus.WifiAddress do
     |> extract_ip4_address()
   end
 
-
   @impl true
   def connection_status do
-   apply(VintageNet, :get, [["interface", "wlan0", "connection"]])
+    apply(VintageNet, :get, [["interface", "wlan0", "connection"]])
   end
 
   defp extract_ip4_address({'wlan0', details}) do

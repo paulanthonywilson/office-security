@@ -12,7 +12,6 @@ defmodule Movement.MovementSensor do
   require Logger
 
   @name __MODULE__
-  @topic :movement
 
   @pin 17
 
@@ -31,26 +30,33 @@ defmodule Movement.MovementSensor do
   Subscribe to receive movement notifications
   """
   def subscribe(server \\ @name) do
-    Events.subscribe(@topic)
-    last_detected_time = GenServer.call(server, :last_detected_time)
-    send(self(), event(:movement_detected, last_detected_time))
+    topic = GenServer.call(server, :subscribing)
+    Events.subscribe(topic)
     :ok
   end
 
-  def handle_call(:last_detected_time, _, %{last_detected_time: last_detected_time} = s) do
-    {:reply, last_detected_time, s}
+  def handle_call(
+        :subscribing,
+        {caller, _},
+        %{last_detected_time: last_detected_time, topic: topic} = s
+      ) do
+    if last_detected_time do
+      send(caller, event(:movement_detected, last_detected_time))
+    end
+
+    {:reply, topic, s}
   end
 
-  def handle_info({:circuits_gpio, @pin, _, 1}, s) do
+  def handle_info({:circuits_gpio, @pin, _, 1}, %{topic: topic} = s) do
     Logger.debug("movement detected")
     last_detected_time = DateTime.utc_now()
-    Events.publish(@topic, event(:movement_detected, last_detected_time))
+    Events.publish(topic, event(:movement_detected, last_detected_time))
     {:noreply, %{s | last_detected_time: last_detected_time}}
   end
 
-  def handle_info({:circuits_gpio, @pin, _, 0}, s) do
+  def handle_info({:circuits_gpio, @pin, _, 0}, %{topic: topic} = s) do
     Logger.debug("movement detection stop")
-    Events.publish(@topic, event(:movement_stop, DateTime.utc_now()))
+    Events.publish(topic, event(:movement_stop, DateTime.utc_now()))
     {:noreply, s}
   end
 

@@ -1,7 +1,7 @@
-defmodule Moveement.MovementLedTest do
+defmodule Movement.MovementLedTest do
   use ExUnit.Case, async: false
   alias Circuits.GPIO
-  alias Moveement.MovementLed
+  alias Movement.MovementLed
 
   setup do
     {:ok, led} = GPIO.open(63, :output)

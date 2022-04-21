@@ -7,7 +7,8 @@ defmodule Movement.Application do
   def start(_type, _args) do
     children = [
       Movement.MovementSensor,
-      Moveement.MovementLed
+      Movement.MovementLed,
+      Movement.Occupation
     ]
 
     opts = [strategy: :one_for_one, name: Movement.Supervisor]

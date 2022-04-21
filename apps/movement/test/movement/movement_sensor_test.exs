@@ -17,17 +17,21 @@ defmodule Movement.MovementSensorTest do
       assert_receive {:movement, {:movement_detected, %DateTime{} = _timestamp}}
     end
 
-    test "broadcasts but does not save time when movement stops" do
-      assert {:noreply, %{last_detected_time: nil}} =
-               MovementSensor.handle_info({:circuits_gpio, 17, :_, 0}, %{last_detected_time: nil})
-
+    test "broadcasts but does not save time when movement stops", %{pid: pid} do
+      send(pid, {:circuits_gpio, 17, :_, 0})
       assert_receive {:movement, {:movement_stop, %DateTime{} = _timestamp}}
     end
   end
 
-  test "subscribe also sends the last event" do
-    :ok = MovementSensor.subscribe()
+  test "subscribe also sends the last event if there is one", %{pid: pid} do
+    send(pid, {:circuits_gpio, 17, :_, 1})
+    :ok = MovementSensor.subscribe(pid)
     assert_receive {:movement, {:movement_detected, _}}
+  end
+
+  test "subscribe does not send any events if movement has never been detected", %{pid: pid} do
+    :ok = MovementSensor.subscribe(pid)
+    refute_receive {:movement, _}
   end
 
   defp name, do: self() |> inspect() |> String.to_atom()

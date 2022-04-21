@@ -1,4 +1,4 @@
-defmodule Moveement.MovementLed do
+defmodule Movement.MovementLed do
   @moduledoc """
   Turns the led on and off based on movement.
   """
