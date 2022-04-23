@@ -1,4 +1,4 @@
-defmodule NetworkStatus.WifiAddressBehaviour do
+defmodule NetworkStatus.StatusBehaviour do
   @moduledoc """
   Seam for getting the WifiAddress in tests.
   """

@@ -8,7 +8,7 @@ defmodule NetworkStatus.SetsNetworkStatus do
   * if it is set to soemthing else then turn off the LED
 
   This could have be done with subscribing to VintageNet but that gets complicated to test
-  the different states.
+  the different states and may not deal well with any VintageNet bugs.
   """
 
   use GenServer

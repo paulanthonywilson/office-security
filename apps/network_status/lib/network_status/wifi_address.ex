@@ -6,7 +6,7 @@ defmodule NetworkStatus.WifiAddress do
   @doc """
   Gets the wlan0 address if it's there
   """
-  @behaviour NetworkStatus.WifiAddressBehaviour
+  @behaviour NetworkStatus.StatusBehaviour
 
   @impl true
   def wlan0_address do
