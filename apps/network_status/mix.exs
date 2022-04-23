@@ -1,9 +1,9 @@
-defmodule LedStatus.MixProject do
+defmodule NetworkStatus.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :led_status,
+      app: :network_status,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -19,7 +19,7 @@ defmodule LedStatus.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {LedStatus.Application, []}
+      mod: {NetworkStatus.Application, []}
     ]
   end
 

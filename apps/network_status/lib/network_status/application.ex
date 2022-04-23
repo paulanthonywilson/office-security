@@ -1,4 +1,4 @@
-defmodule LedStatus.Application do
+defmodule NetworkStatus.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -8,10 +8,10 @@ defmodule LedStatus.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      LedStatus.SetsLedStatus
+      NetworkStatus.SetsNetworkStatus
     ]
 
-    opts = [strategy: :one_for_one, name: LedStatus.Supervisor]
+    opts = [strategy: :one_for_one, name: NetworkStatus.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

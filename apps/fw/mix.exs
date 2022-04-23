@@ -65,7 +65,7 @@ defmodule Fw.MixProject do
       {:events, in_umbrella: true},
       {:ds18b20, in_umbrella: true},
       {:wifi, in_umbrella: true},
-      {:led_status, in_umbrella: true},
+      {:network_status, in_umbrella: true},
       {:movement, in_umbrella: true}
     ]
   end

@@ -1,4 +1,4 @@
-# LedStatus
+# NetworkStatus
 
 Use the on-board LEDs to indicate wifi connection status. The connection status is not relying on VingageNet as that can get complicated and because of history with `nerves_networking` using a different source makes me feel more confident. It uses the IP addresses
 

@@ -1,4 +1,4 @@
-defmodule LedStatus.OnboardLedBehaviour do
+defmodule NetworkStatus.OnboardLedBehaviour do
   @moduledoc """
   Behaviour for turning on and off the onboard LED of a Pi Zero, addressed as "led0".
 

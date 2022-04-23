@@ -1,7 +1,7 @@
-defmodule LedStatus.WifiAddressTest do
+defmodule NetworkStatus.WifiAddressTest do
   use ExUnit.Case, async: true
 
-  alias LedStatus.WifiAddress
+  alias NetworkStatus.WifiAddress
 
   # credo:disable-for-this-file Credo.Check.Readability.LargeNumbers
 

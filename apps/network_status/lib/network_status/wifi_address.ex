@@ -1,4 +1,4 @@
-defmodule LedStatus.WifiAddress do
+defmodule NetworkStatus.WifiAddress do
   @moduledoc """
   Uses `:inet.getifaddrs/0` to get the IP4 address at `wlan0`. Works on a Pi with Nerves; won't work on OS X (for instance)
   """
@@ -6,7 +6,7 @@ defmodule LedStatus.WifiAddress do
   @doc """
   Gets the wlan0 address if it's there
   """
-  @behaviour LedStatus.WifiAddressBehaviour
+  @behaviour NetworkStatus.WifiAddressBehaviour
 
   @impl true
   def wlan0_address do

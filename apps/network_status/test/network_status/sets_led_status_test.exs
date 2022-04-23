@@ -1,7 +1,7 @@
-defmodule LedStatus.SetsLedStatusTest do
+defmodule NetworkStatus.SetsNetworkStatusTest do
   use ExUnit.Case, async: true
 
-  alias LedStatus.{SetsLedStatus, MockOnboardLed, MockWifiAddress}
+  alias NetworkStatus.{SetsNetworkStatus, MockOnboardLed, MockWifiAddress}
 
   import Mox
 
@@ -12,7 +12,7 @@ defmodule LedStatus.SetsLedStatusTest do
     expect(MockWifiAddress, :connection_status, fn -> :internet end)
     expect(MockOnboardLed, :turn_off, fn -> :ok end)
 
-    SetsLedStatus.handle_info(:check_addresses, {})
+    SetsNetworkStatus.handle_info(:check_addresses, {})
     assert_receive :schedule_next_check
   end
 
@@ -21,7 +21,7 @@ defmodule LedStatus.SetsLedStatusTest do
     expect(MockWifiAddress, :connection_status, fn -> :lan end)
     expect(MockOnboardLed, :flash_heartbeat, fn -> :ok end)
 
-    SetsLedStatus.handle_info(:check_addresses, {})
+    SetsNetworkStatus.handle_info(:check_addresses, {})
     assert_receive :schedule_next_check
   end
 
@@ -29,7 +29,7 @@ defmodule LedStatus.SetsLedStatusTest do
     expect(MockWifiAddress, :wlan0_address, fn -> nil end)
     expect(MockOnboardLed, :flash_alarmingly, fn -> :ok end)
 
-    SetsLedStatus.handle_info(:check_addresses, {})
+    SetsNetworkStatus.handle_info(:check_addresses, {})
     assert_receive :schedule_next_check
   end
 
@@ -37,7 +37,7 @@ defmodule LedStatus.SetsLedStatusTest do
     expect(MockWifiAddress, :wlan0_address, fn -> {192, 168, 0, 1} end)
     expect(MockOnboardLed, :flash_languidly, fn -> :ok end)
 
-    SetsLedStatus.handle_info(:check_addresses, {})
+    SetsNetworkStatus.handle_info(:check_addresses, {})
     assert_receive :schedule_next_check
   end
 end

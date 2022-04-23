@@ -1,8 +1,8 @@
-defmodule LedStatus.OnboardLed do
+defmodule NetworkStatus.OnboardLed do
   @moduledoc """
   Turns the Pi Zero Led on or off
   """
-  @behaviour LedStatus.OnboardLedBehaviour
+  @behaviour NetworkStatus.OnboardLedBehaviour
 
   @led_addr "led0"
 

@@ -1,4 +1,4 @@
-defmodule LedStatus.SetsLedStatus do
+defmodule NetworkStatus.SetsNetworkStatus do
   @moduledoc """
   Checks to see if there's an IP address assigned to wlan0 every 5 seconds and:
 
@@ -13,8 +13,12 @@ defmodule LedStatus.SetsLedStatus do
 
   use GenServer
 
-  @wifi_address if Mix.env() == :test, do: LedStatus.MockWifiAddress, else: LedStatus.WifiAddress
-  @onboard_led if Mix.env() == :test, do: LedStatus.MockOnboardLed, else: LedStatus.OnboardLed
+  @wifi_address if Mix.env() == :test,
+                  do: NetworkStatus.MockWifiAddress,
+                  else: NetworkStatus.WifiAddress
+  @onboard_led if Mix.env() == :test,
+                 do: NetworkStatus.MockOnboardLed,
+                 else: NetworkStatus.OnboardLed
 
   @name __MODULE__
 
