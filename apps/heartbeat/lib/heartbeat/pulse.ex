@@ -1,4 +1,4 @@
-defmodule Heartbeat.HeartBeat do
+defmodule Heartbeat.Pulse do
   @moduledoc """
   Heartbeat.
 
@@ -13,34 +13,41 @@ defmodule Heartbeat.HeartBeat do
   use Heartbeat.VintageNetProperties
 
   @name __MODULE__
-  @poll_interval :timer.seconds(30)
+  @poll_interval :timer.seconds(10)
   require Logger
 
-  defstruct lan_only_count: 0, no_net_count: 0, status: :ok
+  defstruct lan_only_count: 0, no_net_count: 0, status: :ok, highest_no_net: 0, last_kick: nil
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: @name)
   end
 
   def status do
-    GenServer.call(@name, :status) |> inspect() |> Logger.debug()
-    :ok
+    GenServer.call(@name, :status)
+  end
+
+  def last_kick do
+    GenServer.call(@name, :last_kick)
   end
 
   def init(_) do
     if Process.whereis(:heart) do
       :heart.set_callback(__MODULE__, :status)
     else
-      Logger.warn("No heartbeat set")
+      Logger.info("No heartbeat set")
     end
 
     Process.send_after(self(), :check, @poll_interval)
 
-    {:ok, reset()}
+    {:ok, %__MODULE__{}}
   end
 
   def handle_call(:status, _, %{status: status} = s) do
     {:reply, status, s}
+  end
+
+  def handle_call(:status, _, %{last_kick: last_kick} = s) do
+    {:reply, last_kick, s}
   end
 
   def handle_info(:check, s) do
@@ -50,7 +57,7 @@ defmodule Heartbeat.HeartBeat do
 
   defp check(state) do
     if hotspot?() do
-      reset()
+      reset_counters(state)
     else
       state
       |> check_connection()
@@ -59,26 +66,41 @@ defmodule Heartbeat.HeartBeat do
     end
   end
 
-  defp check_connection(%{lan_only_count: lan_count, no_net_count: net_count} = s) do
-    if :internet == VintageNetProperties.get(["interface", "wlan0", "connection"]) do
-      reset()
+  defp check_connection(
+         %{lan_only_count: lan_count, no_net_count: net_count, highest_no_net: highest_no_net} = s
+       ) do
+    if :internet == connection_status() do
+      reset_counters(s)
     else
-      %{s | lan_only_count: lan_count + 1, no_net_count: net_count + 1}
+      no_net_count = net_count + 1
+
+      %{
+        s
+        | lan_only_count: lan_count + 1,
+          no_net_count: no_net_count,
+          highest_no_net: Enum.max([no_net_count, highest_no_net])
+      }
     end
   end
 
-  defp check_lan_only_count(%{lan_only_count: 8} = s) do
+  defp reset_counters(state) do
+    %{state | lan_only_count: 0, no_net_count: 0}
+  end
+
+  defp connection_status do
+    VintageNetProperties.get(["interface", "wlan0", "connection"])
+  end
+
+  defp check_lan_only_count(%{lan_only_count: 24} = s) do
     VintageNetProperties.kick()
-    %{s | lan_only_count: 0}
+    %{s | lan_only_count: 0, last_kick: DateTime.utc_now()}
   end
 
   defp check_lan_only_count(s), do: s
 
-  defp check_ok(%{no_net_count: 28} = s), do: %{s | status: :down}
+  defp check_ok(%{no_net_count: 84} = s), do: %{s | status: :down}
 
   defp check_ok(s), do: %{s | status: :ok}
-
-  defp reset, do: %__MODULE__{}
 
   defp hotspot?, do: {192, 168, 0, 1} == ipv4()
 

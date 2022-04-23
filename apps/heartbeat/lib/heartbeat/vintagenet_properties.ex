@@ -16,9 +16,13 @@ defmodule Heartbeat.VintageNetProperties do
   @callback get([String.t()]) :: any()
   @callback kick :: :ok
 
+  @mix_target Mix.target()
+
+  def mix_target, do: @mix_target
+
   defmacro __using__(_) do
     mod =
-      if :host == Mix.target() do
+      if :host == apply(__MODULE__, :mix_target, []) do
         Heartbeat.FakeVintageNetProperties
       else
         Heartbeat.RealVintageNetProperties

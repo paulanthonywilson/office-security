@@ -8,7 +8,7 @@ defmodule Heartbeat.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      Heartbeat.HeartBeat
+      Heartbeat.Pulse
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

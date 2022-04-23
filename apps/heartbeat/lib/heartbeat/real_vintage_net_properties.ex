@@ -7,7 +7,7 @@ defmodule Heartbeat.RealVintageNetProperties do
 
   @impl true
   def get(properties) do
-    apply(VintagetNet, :get, [properties])
+    apply(VintageNet, :get, [properties])
   end
 
   @impl true
