@@ -2,9 +2,8 @@ defmodule Heartbeat.HeartBeat do
   @moduledoc """
   Heartbeat.
 
-  * After 28 checks without an internet connection (~ 14 minutes with a 30 second
-  check interval) reboots
-  * After every 8 checks (4 mins) with only a 'lan' connection (no internet) kicks VintageNet by killing
+  * Without an internet connection for about 14 minutes with a 30 second check interval) reboots
+  * After about 4 mins with only a 'lan' connection (no internet) kicks VintageNet by killing
   `VintageNet.RouteManager`
 
   All check counts are reset to zero on every heartbeat if the local ip address is 192.168.0.1, ie
@@ -14,38 +13,46 @@ defmodule Heartbeat.HeartBeat do
   use Heartbeat.VintageNetProperties
 
   @name __MODULE__
+  @poll_interval :timer.seconds(30)
   require Logger
 
-  defstruct lan_only_count: 0, no_net_count: 0
+  defstruct lan_only_count: 0, no_net_count: 0, status: :ok
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: @name)
   end
 
-  def check do
-    GenServer.call(@name, :check)
+  def status do
+    GenServer.call(@name, :status) |> inspect() |> Logger.debug()
+    :ok
   end
 
   def init(_) do
     if Process.whereis(:heart) do
-      :heart.set_callback(__MODULE__, :check)
+      :heart.set_callback(__MODULE__, :status)
     else
       Logger.warn("No heartbeat set")
     end
 
+    Process.send_after(self(), :check, @poll_interval)
+
     {:ok, reset()}
   end
 
-  def handle_call(:check, _, s) do
-    {health, state} = check(s)
-    {:reply, health, state}
+  def handle_call(:status, _, %{status: status} = s) do
+    {:reply, status, s}
   end
 
-  defp check(s) do
+  def handle_info(:check, s) do
+    Process.send_after(self(), :check, @poll_interval)
+    {:noreply, check(s)}
+  end
+
+  defp check(state) do
     if hotspot?() do
-      {:ok, reset()}
+      reset()
     else
-      s
+      state
       |> check_connection()
       |> check_lan_only_count()
       |> check_ok()
@@ -67,9 +74,9 @@ defmodule Heartbeat.HeartBeat do
 
   defp check_lan_only_count(s), do: s
 
-  defp check_ok(%{no_net_count: 28} = s), do: {:down, s}
+  defp check_ok(%{no_net_count: 28} = s), do: %{s | status: :down}
 
-  defp check_ok(s), do: {:ok, s}
+  defp check_ok(s), do: %{s | status: :ok}
 
   defp reset, do: %__MODULE__{}
 

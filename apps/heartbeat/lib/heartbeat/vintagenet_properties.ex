@@ -18,10 +18,10 @@ defmodule Heartbeat.VintageNetProperties do
 
   defmacro __using__(_) do
     mod =
-      if function_exported?(VintageNet, :get, 1) do
-        Heartbeat.RealVintageNetProperties
-      else
+      if :host == Mix.target() do
         Heartbeat.FakeVintageNetProperties
+      else
+        Heartbeat.RealVintageNetProperties
       end
 
     quote do
