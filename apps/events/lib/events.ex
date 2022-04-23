@@ -26,17 +26,4 @@ defmodule Events do
 
     :ok
   end
-
-  @doc """
-  Sends the event, like publish, but only to the calling process.
-  Useful to get the latest event when subscribing.
-  """
-  @spec send_self(topic :: any, event :: any) :: :ok
-  def send_self(topic, event) do
-    :ok
-  end
-
-  defp publish_to_process(pid, topic, event) do
-    send(pid, {topic, event})
-  end
 end

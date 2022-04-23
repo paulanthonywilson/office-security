@@ -66,6 +66,7 @@ defmodule Fw.MixProject do
       {:ds18b20, in_umbrella: true},
       {:wifi, in_umbrella: true},
       {:network_status, in_umbrella: true},
+      {:heartbeat, in_umbrella: true},
       {:movement, in_umbrella: true}
     ]
   end
