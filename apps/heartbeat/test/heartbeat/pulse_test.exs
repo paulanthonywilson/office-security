@@ -21,6 +21,14 @@ defmodule Heartbeat.PulseTest do
              })
   end
 
+  test "no_net and lan_only incremented when no ip" do
+    stub_prop(["interface", "wlan0", "addresses"], [])
+    stub_prop(:disconnected)
+
+    assert {:noreply, %{status: :ok, no_net_count: 5, lan_only_count: 3}} =
+             Pulse.handle_info(:check, %Pulse{no_net_count: 4, lan_only_count: 2})
+  end
+
   test "resets counters when connected" do
     stub_prop(:internet)
 

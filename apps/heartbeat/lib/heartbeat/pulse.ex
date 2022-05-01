@@ -114,7 +114,7 @@ defmodule Heartbeat.Pulse do
 
   defp find_ipv4(addresses) do
     addresses
-    |> Enum.find(fn %{family: family} -> family == :inet end)
+    |> Enum.find(%{}, fn %{family: family} -> family == :inet end)
     |> Map.get(:address)
   end
 end
