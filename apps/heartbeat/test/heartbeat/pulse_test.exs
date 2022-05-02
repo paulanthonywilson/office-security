@@ -70,6 +70,11 @@ defmodule Heartbeat.PulseTest do
              Pulse.handle_info(:check, %Pulse{no_net_count: 83, lan_only_count: 2})
   end
 
+  test "status not reset at 85 n_nets" do
+    assert {:noreply, %{status: :down}} =
+             Pulse.handle_info(:check, %Pulse{no_net_count: 85, lan_only_count: 2, status: :down})
+  end
+
   defp set_ip4(addr) do
     addresses = [
       %{

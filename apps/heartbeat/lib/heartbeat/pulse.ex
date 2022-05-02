@@ -100,7 +100,7 @@ defmodule Heartbeat.Pulse do
 
   defp check_ok(%{no_net_count: 84} = s), do: %{s | status: :down}
 
-  defp check_ok(s), do: %{s | status: :ok}
+  defp check_ok(s), do: s
 
   defp hotspot?, do: {192, 168, 0, 1} == ipv4()
 
