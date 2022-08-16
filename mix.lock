@@ -74,4 +74,5 @@
   "vintage_net_ethernet": {:hex, :vintage_net_ethernet, "0.10.3", "5325c590459544f871b0a807061fa37c3833ed8f83b94b0a15d497177503d5c2", [:mix], [{:vintage_net, "~> 0.10.0 or ~> 0.11.0", [hex: :vintage_net, repo: "hexpm", optional: false]}], "hexpm", "4ec1ae7b2188829e493f54e0ba9e36ea53e8c95aecdf5950011ce4f13fe4ed52"},
   "vintage_net_wifi": {:hex, :vintage_net_wifi, "0.10.9", "b3b07992dc2547f7f90b81e0741405ac74204a493180b4d204cd05986445ba02", [:make, :mix], [{:elixir_make, "~> 0.6", [hex: :elixir_make, repo: "hexpm", optional: false]}, {:vintage_net, "~> 0.10.0 or ~> 0.11.0", [hex: :vintage_net, repo: "hexpm", optional: false]}], "hexpm", "a99aad4b9851e240035814d3e0ccf3eff29ef33ac9ca1961ce11fdd5433dd179"},
   "vintage_net_wizard": {:git, "git@github.com:paulanthonywilson/vintage_net_wizard.git", "3e1c22dfd0645a8b7c6d5bf958a463ae338192f0", [branch: "fix-configuration-amnesia-on-shutdown"]},
+  "websockex": {:hex, :websockex, "0.4.3", "92b7905769c79c6480c02daacaca2ddd49de936d912976a4d3c923723b647bf0", [:mix], [], "hexpm", "95f2e7072b85a3a4cc385602d42115b73ce0b74a9121d0d6dbbf557645ac53e4"},
 }
