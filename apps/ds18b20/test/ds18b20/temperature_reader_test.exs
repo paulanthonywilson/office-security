@@ -48,6 +48,12 @@ defmodule Ds18b20.TemperatureReaderTest do
       assert Decimal.equal?("14.188", temperature)
     end
 
+    test "deals with below freezing temperatures", %{device_file: device_file} do
+      write_valid_temperature(device_file, "-5562")
+      assert {:ok, %Decimal{} = temperature} = TemperatureReader.read_temperature(device_file)
+      assert Decimal.equal?("-5.562", temperature)
+    end
+
     test "error if crc is not valid", %{device_file: device_file} do
       write_crc_fail_temperature(device_file)
 

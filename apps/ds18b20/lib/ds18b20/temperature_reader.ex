@@ -3,7 +3,7 @@ defmodule Ds18b20.TemperatureReader do
   Takes care of reading the temperature via OneWire
   """
 
-  @temperature_regex ~r/crc=\w\w\s*(?<crc>\w+)$.*t=(?<t>\d+)$/sm
+  @temperature_regex ~r/crc=\w\w\s*(?<crc>\w+)$.*t=(?<t>-?\d+)$/sm
 
   @doc """
   Finds the device file
