@@ -16,7 +16,7 @@ defmodule Movement do
   Get occupation events, when we determine
   the place has become occupied or unoccupied
   """
-  @spec movement_subscribe :: :ok
+  @spec occupation_subscribe :: :ok
   def occupation_subscribe do
     Occupation.subscribe()
   end

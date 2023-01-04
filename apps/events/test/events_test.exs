@@ -1,5 +1,5 @@
 defmodule EventsTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   test "can subscribe to a topic and receive events on that topic" do
     assert :ok == Events.subscribe(:my_events)

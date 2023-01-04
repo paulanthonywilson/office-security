@@ -69,6 +69,10 @@ defmodule OfficeSecWeb.MainLive do
     {:noreply, assign(socket, occupation: occupation, occupation_time: timestamp)}
   end
 
+  def handle_info(:stop, socket) do
+    {:noreply, socket}
+  end
+
   def handle_info(event, socket) do
     Logger.debug(fn -> "MainLive event unhandled: #{inspect(event)}" end)
     {:noreply, socket}

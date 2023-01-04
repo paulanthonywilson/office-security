@@ -35,14 +35,14 @@ defmodule Fw.MixProject do
   defp deps do
     [
       # Dependencies for all targets
-      {:nerves, "~> 1.7.15", runtime: false},
-      {:shoehorn, "~> 0.8.0"},
+      {:nerves, "~> 1.9.1", runtime: false},
+      {:shoehorn, "~> 0.9.1"},
       {:ring_logger, "~> 0.8.3"},
       {:toolshed, "~> 0.2.13"},
 
       # Dependencies for all targets except :host
-      {:nerves_runtime, "~> 0.11.6", targets: @all_targets},
-      {:nerves_pack, "~> 0.6.0", targets: @all_targets},
+      {:nerves_runtime, "~> 0.13.3", targets: @all_targets},
+      {:nerves_pack, "~> 0.7.0", targets: @all_targets},
 
       # Dependencies for specific targets
       # NOTE: It's generally low risk and recommended to follow minor version
@@ -69,8 +69,11 @@ defmodule Fw.MixProject do
       {:ds18b20, in_umbrella: true},
       {:wifi, in_umbrella: true},
       {:network_status, in_umbrella: true},
-      {:heartbeat, in_umbrella: true},
-      {:movement, in_umbrella: true}
+      # {:heartbeat, in_umbrella: true},
+      {:movement, in_umbrella: true},
+
+      # extracted
+      {:vintage_heart, git: "git@github.com:paulanthonywilson/vintage_heart.git"}
     ]
   end
 

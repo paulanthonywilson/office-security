@@ -26,7 +26,7 @@ defmodule Wifi.MixProject do
 
   defp deps do
     [
-      {:circuits_gpio, "~> 1.0.0"}
+      {:circuits_gpio, "~> 1.1.0"}
     ] ++ deps(Mix.target())
   end
 
@@ -34,10 +34,7 @@ defmodule Wifi.MixProject do
 
   defp deps(_) do
     [
-      # Fixed VintageNetWizard
-      {:vintage_net_wizard,
-       git: "git@github.com:paulanthonywilson/vintage_net_wizard.git",
-       branch: "fix-configuration-amnesia-on-shutdown"}
+      {:vintage_net_wizard, "~> 0.4.10"}
     ]
   end
 
