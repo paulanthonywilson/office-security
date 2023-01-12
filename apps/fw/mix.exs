@@ -65,14 +65,13 @@ defmodule Fw.MixProject do
       # under the umbrella
 
       {:office_sec_web, in_umbrella: true},
-      {:ds18b20, in_umbrella: true},
-      {:wifi, in_umbrella: true},
-      {:network_status, in_umbrella: true},
       # {:heartbeat, in_umbrella: true},
       {:movement, in_umbrella: true},
 
       # extracted
-      {:vintage_heart, "~> 0.1.0"}
+      {:vintage_heart, "~> 0.1.0"},
+      {:connectivity_led_status, "~> 0.1.2"},
+      {:vintage_net_wizard_launcher, "~> 0.1.0"}
     ]
   end
 

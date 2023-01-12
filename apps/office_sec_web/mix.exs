@@ -50,7 +50,7 @@ defmodule OfficeSecWeb.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:tailwind, "~> 0.1.5", runtime: Mix.env() == :dev},
-      {:ds18b20, in_umbrella: true},
+      {:ds18b20, git: "git@github.com:paulanthonywilson/ds18b20.git"},
       {:movement, in_umbrella: true}
     ]
   end
