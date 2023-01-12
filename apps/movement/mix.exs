@@ -27,7 +27,7 @@ defmodule Movement.MixProject do
   defp deps do
     [
       {:circuits_gpio, "~> 1.0"},
-      {:events, in_umbrella: true}
+      {:simplest_pub_sub, "~> 0.1.0"}
     ]
   end
 end

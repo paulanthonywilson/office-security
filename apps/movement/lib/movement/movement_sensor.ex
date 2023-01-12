@@ -31,7 +31,7 @@ defmodule Movement.MovementSensor do
   """
   def subscribe(server \\ @name) do
     topic = GenServer.call(server, :subscribing)
-    Events.subscribe(topic)
+    SimplestPubSub.subscribe(topic)
     :ok
   end
 
@@ -50,13 +50,13 @@ defmodule Movement.MovementSensor do
   def handle_info({:circuits_gpio, @pin, _, 1}, %{topic: topic} = s) do
     Logger.debug("movement detected")
     last_detected_time = DateTime.utc_now()
-    Events.publish(topic, event(:movement_detected, last_detected_time))
+    SimplestPubSub.publish(topic, event(:movement_detected, last_detected_time))
     {:noreply, %{s | last_detected_time: last_detected_time}}
   end
 
   def handle_info({:circuits_gpio, @pin, _, 0}, %{topic: topic} = s) do
     Logger.debug("movement detection stop")
-    Events.publish(topic, event(:movement_stop, DateTime.utc_now()))
+    SimplestPubSub.publish(topic, event(:movement_stop, DateTime.utc_now()))
     {:noreply, s}
   end
 

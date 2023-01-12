@@ -65,7 +65,6 @@ defmodule Fw.MixProject do
       # under the umbrella
 
       {:office_sec_web, in_umbrella: true},
-      {:events, in_umbrella: true},
       {:ds18b20, in_umbrella: true},
       {:wifi, in_umbrella: true},
       {:network_status, in_umbrella: true},
@@ -73,7 +72,7 @@ defmodule Fw.MixProject do
       {:movement, in_umbrella: true},
 
       # extracted
-      {:vintage_heart, git: "git@github.com:paulanthonywilson/vintage_heart.git"}
+      {:vintage_heart, "~> 0.1.0"}
     ]
   end
 

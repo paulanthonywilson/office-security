@@ -26,7 +26,7 @@ defmodule Ds18b20.MixProject do
   defp deps do
     [
       {:decimal, "~> 2.0"},
-      {:events, in_umbrella: true}
+      {:simplest_pub_sub, "~> 0.1.0"}
     ]
   end
 

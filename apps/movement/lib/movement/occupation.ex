@@ -32,7 +32,7 @@ defmodule Movement.Occupation do
 
   def subscribe(server \\ @name) do
     topic = GenServer.call(server, :subscribing)
-    Events.subscribe(topic)
+    SimplestPubSub.subscribe(topic)
   end
 
   def init(topic) do
@@ -75,13 +75,13 @@ defmodule Movement.Occupation do
         occupation_timestamp: timestamp
     }
 
-    Events.publish(topic, occupation_event(state))
+    SimplestPubSub.publish(topic, occupation_event(state))
     {:noreply, state}
   end
 
   def handle_info({:occupation_timeout, timestamp}, %{topic: topic} = s) do
     state = %{s | occupied?: false, occupation_timer: nil, occupation_timestamp: timestamp}
-    Events.publish(topic, occupation_event(state))
+    SimplestPubSub.publish(topic, occupation_event(state))
     {:noreply, state}
   end
 

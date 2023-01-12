@@ -33,14 +33,14 @@ defmodule Ds18b20.TemperatureServer do
 
   @doc """
   Subcribe to receive notifications of temperature after every reading. Also receives a notification
-  on subscription. Events are in the form of
+  on subscription. Event messages are in the form of
     `{:ds18b20_temperature, {:ok, Decimal.new(21)}}`
   with the second element being any valid return falue of `read/1`
   """
   @spec subscribe(atom | pid) :: :ok
   def subscribe(server \\ @name) do
     topic = GenServer.call(server, :subscribing)
-    Events.subscribe(topic)
+    SimplestPubSub.subscribe(topic)
   end
 
   def init({device_base, topic}) do
@@ -68,7 +68,7 @@ defmodule Ds18b20.TemperatureServer do
   def handle_info(:read_temperature, %{device: device, topic: topic} = s) do
     schedule_next_read()
     temp = TemperatureReader.read_temperature(device)
-    Events.publish(topic, event(temp))
+    SimplestPubSub.publish(topic, event(temp))
     {:noreply, Map.put(s, :value, temp)}
   end
 
