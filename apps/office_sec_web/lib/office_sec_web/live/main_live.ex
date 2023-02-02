@@ -63,7 +63,7 @@ defmodule OfficeSecWeb.MainLive do
     {:noreply, assign(socket, last_movement: datetime)}
   end
 
-  def handle_info({Movement.Sensor, :movement_stopped, datetime}, socket) do
+  def handle_info({Movement.Sensor, :movement_stopped, _datetime}, socket) do
     # we don't need to know about this
     {:noreply, socket}
   end
