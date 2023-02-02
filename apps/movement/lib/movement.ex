@@ -1,23 +1,12 @@
 defmodule Movement do
-  @moduledoc """
-  Documentation for `Movement`.
-  """
-  alias Movement.{MovementSensor, Occupation}
+  @moduledoc false
+
+  alias Movement.Sensor
 
   @doc """
-  Get invidual movement detection events
+  Get movement and occupation events
   """
-  @spec movement_subscribe :: :ok
-  def movement_subscribe do
-    MovementSensor.subscribe()
-  end
-
-  @doc """
-  Get occupation events, when we determine
-  the place has become occupied or unoccupied
-  """
-  @spec occupation_subscribe :: :ok
-  def occupation_subscribe do
-    Occupation.subscribe()
+  def subscribe do
+    Sensor.subscribe()
   end
 end

@@ -26,7 +26,7 @@ defmodule Movement.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:circuits_gpio, "~> 1.0"},
+      {:hc_sr_501_occupation, "~> 0.1.0"},
       {:simplest_pub_sub, "~> 0.1.0"}
     ]
   end

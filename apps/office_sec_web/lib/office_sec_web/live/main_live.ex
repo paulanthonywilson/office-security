@@ -12,8 +12,7 @@ defmodule OfficeSecWeb.MainLive do
   def mount(_params, _session, socket) do
     if connected?(socket) do
       Ds18b20.subscribe()
-      Movement.movement_subscribe()
-      Movement.occupation_subscribe()
+      Movement.subscribe()
     end
 
     {:ok,
@@ -60,13 +59,21 @@ defmodule OfficeSecWeb.MainLive do
     {:noreply, assign(socket, temperature: temperature, last_update: DateTime.utc_now())}
   end
 
-  def handle_info({:movement, {:movement_detected, datetime}}, socket) do
+  def handle_info({Movement.Sensor, :movement_detected, datetime}, socket) do
     {:noreply, assign(socket, last_movement: datetime)}
   end
 
-  def handle_info({:occupied, {occupied?, timestamp}}, socket) do
-    occupation = if occupied?, do: "Yes", else: "No"
-    {:noreply, assign(socket, occupation: occupation, occupation_time: timestamp)}
+  def handle_info({Movement.Sensor, :movement_stopped, datetime}, socket) do
+    # we don't need to know about this
+    {:noreply, socket}
+  end
+
+  def handle_info({Movement.Sensor, :occupied, timestamp}, socket) do
+    {:noreply, assign(socket, occupation: "Yes", occupation_time: timestamp)}
+  end
+
+  def handle_info({Movement.Sensor, :unoccupied, timestamp}, socket) do
+    {:noreply, assign(socket, occupation: "No", occupation_time: timestamp)}
   end
 
   def handle_info(:stop, socket) do

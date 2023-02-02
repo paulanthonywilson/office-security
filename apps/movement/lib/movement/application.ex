@@ -6,9 +6,8 @@ defmodule Movement.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      Movement.MovementSensor,
-      Movement.MovementLed,
-      Movement.Occupation
+      Movement.Sensor,
+      Movement.MovementLed
     ]
 
     opts = [strategy: :one_for_one, name: Movement.Supervisor]

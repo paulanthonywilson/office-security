@@ -5,27 +5,29 @@ defmodule Movement.MovementLed do
   use GenServer
 
   alias Circuits.GPIO
-  alias Movement.MovementSensor
+  alias Movement.Sensor
 
   @name __MODULE__
   @pin 27
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, {}, name: @name)
+  def start_link(opts) do
+    name = Keyword.get(opts, :name, @name)
+    pin = Keyword.get(opts, :pin, @pin)
+    GenServer.start_link(__MODULE__, pin, name: name)
   end
 
-  def init(_) do
-    {:ok, led} = GPIO.open(@pin, :output)
-    :ok = MovementSensor.subscribe()
+  def init(pin) do
+    {:ok, led} = GPIO.open(pin, :output, initial_value: 0)
+    :ok = Sensor.subscribe()
     {:ok, %{led: led}}
   end
 
-  def handle_info({:movement, :movement_detected}, %{led: led} = s) do
+  def handle_info({Movement.Sensor, :movement_detected, _}, %{led: led} = s) do
     GPIO.write(led, 1)
     {:noreply, s}
   end
 
-  def handle_info({:movement, :movement_stop}, %{led: led} = s) do
+  def handle_info({Movement.Sensor, :movement_stopped, _}, %{led: led} = s) do
     GPIO.write(led, 0)
     {:noreply, s}
   end
