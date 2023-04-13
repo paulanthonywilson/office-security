@@ -35,10 +35,10 @@ defmodule Fw.MixProject do
   defp deps do
     [
       # Dependencies for all targets
-      {:nerves, "~> 1.9.1", runtime: false},
+      {:nerves, "~> 1.10", runtime: false},
       {:shoehorn, "~> 0.9.1"},
-      {:ring_logger, "~> 0.8.3"},
-      {:toolshed, "~> 0.2.13"},
+      {:ring_logger, "~> 0.9.0"},
+      {:toolshed, "~> 0.3.0"},
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.13.3", targets: @all_targets},
@@ -49,15 +49,8 @@ defmodule Fw.MixProject do
       # bumps to Nerves systems. Since these include Linux kernel and Erlang
       # version updates, please review their release notes in case
       # changes to your application are needed.
-      {:nerves_system_rpi, "~> 1.18", runtime: false, targets: :rpi},
-      {:nerves_system_rpi0, "~> 1.18", runtime: false, targets: :rpi0},
-      {:nerves_system_rpi2, "~> 1.18", runtime: false, targets: :rpi2},
-      {:nerves_system_rpi3, "~> 1.18", runtime: false, targets: :rpi3},
-      {:nerves_system_rpi3a, "~> 1.18", runtime: false, targets: :rpi3a},
-      {:nerves_system_rpi4, "~> 1.18", runtime: false, targets: :rpi4},
-      {:nerves_system_bbb, "~> 2.13", runtime: false, targets: :bbb},
-      {:nerves_system_osd32mp1, "~> 0.9", runtime: false, targets: :osd32mp1},
-      {:nerves_system_x86_64, "~> 1.18", runtime: false, targets: :x86_64},
+      {:nerves_system_rpi, "~> 1.19", runtime: false, targets: :rpi},
+      {:nerves_system_rpi0, "~> 1.19", runtime: false, targets: :rpi0},
 
       # debug
       {:recon, "~> 2.5"},
@@ -65,13 +58,14 @@ defmodule Fw.MixProject do
       # under the umbrella
 
       {:office_sec_web, in_umbrella: true},
-      # {:heartbeat, in_umbrella: true},
       {:movement, in_umbrella: true},
+      {:server_comms, in_umbrella: true},
 
       # extracted
       {:vintage_heart, "~> 0.1.0"},
       {:connectivity_led_status, "~> 0.1.2"},
-      {:vintage_net_wizard_launcher, "~> 0.1.0"}
+      {:vintage_net_wizard_launcher, "~> 0.1.0"},
+      {:vintage_net_wizard, "~> 0.4.12", targets: @all_targets}
     ]
   end
 

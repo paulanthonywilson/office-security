@@ -24,7 +24,9 @@ defmodule ServerComms.MixProject do
 
   defp deps do
     [
-      {:fedecks_client, git: "git@github.com:paulanthonywilson/fedecks_client.git"}
+      {:fedecks_client, git: "git@github.com:paulanthonywilson/fedecks_client.git"},
+      {:ds18b20, git: "git@github.com:paulanthonywilson/ds18b20.git"},
+      {:movement, in_umbrella: true}
     ]
   end
 end
