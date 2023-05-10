@@ -19,7 +19,7 @@ defmodule ServerComms.ReportSensors do
   end
 
   @impl GenServer
-  def handle_info({:ds18b20_temperature, temperature}, s) do
+  def handle_info({:ds18b20_temperature, {:ok, temperature}}, s) do
     Client.send(%{"temperature" => temperature})
     {:noreply, s}
   end
