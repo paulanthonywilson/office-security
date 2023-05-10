@@ -9,6 +9,10 @@ defmodule ServerComms.Client do
     to_string(hostname)
   end
 
+  @connection_url if Mix.target() == :host,
+                    do: "ws://localhost:4000/fedecks/websocket",
+                    else: "wss://office.merecomp.com/fedecks/websocket"
+
   @impl FedecksClient
-  def connection_url, do: "wss://office.merecomp.com/fedecks/websocket"
+  def connection_url, do: @connection_url
 end
