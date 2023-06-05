@@ -3,14 +3,24 @@ defmodule ServerComms.Application do
 
   use Application
 
+  @mix_env Mix.env()
+
   @impl true
   def start(_type, _args) do
-    children = [
-      ServerComms.Client,
-      ServerComms.ReportSensors
-    ]
-
     opts = [strategy: :one_for_one, name: ServerComms.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children(), opts)
+  end
+
+  case Mix.env() do
+    :test ->
+      defp children, do: []
+
+    _ ->
+      defp children do
+        [
+          ServerComms.Client,
+          ServerComms.ReportSensors
+        ]
+      end
   end
 end

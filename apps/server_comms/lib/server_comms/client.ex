@@ -1,18 +1,15 @@
 defmodule ServerComms.Client do
-  @moduledoc false
+  @moduledoc """
+  Testing seam for the Fedecks Client
+  """
 
-  use FedecksClient
+  @implementation if Mix.env() == :test && Mix.target() != :elixir_ls,
+                    do: MockFedecksClient,
+                    else: ServerComms.RealClient
 
-  @impl FedecksClient
-  def device_id do
-    {:ok, hostname} = :inet.gethostname()
-    to_string(hostname)
+  defmacro __using__(_) do
+    quote location: :keep do
+      alias unquote(@implementation), as: Client
+    end
   end
-
-  @connection_url if Mix.target() == :host,
-                    do: "ws://localhost:4000/fedecks/websocket",
-                    else: "wss://office.merecomp.com/fedecks/websocket"
-
-  @impl FedecksClient
-  def connection_url, do: @connection_url
 end

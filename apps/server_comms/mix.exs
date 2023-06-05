@@ -10,6 +10,7 @@ defmodule ServerComms.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -24,9 +25,14 @@ defmodule ServerComms.MixProject do
 
   defp deps do
     [
-      {:fedecks_client, "~> 0.1.2"},
+      # {:fedecks_client, "~> 0.1.2"},
+      {:fedecks_client, path: "../../../fedecks_client"},
       {:ds18b20, git: "git@github.com:paulanthonywilson/ds18b20.git"},
+      {:mox, "~> 1.0", only: :test},
       {:movement, in_umbrella: true}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test"]
+  defp elixirc_paths(_), do: ["lib"]
 end

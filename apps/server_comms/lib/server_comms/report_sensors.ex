@@ -3,7 +3,7 @@ defmodule ServerComms.ReportSensors do
   Simple (for now) passing on messages to the server
   """
   use GenServer
-  alias ServerComms.Client
+  use ServerComms.Client
 
   @name __MODULE__
 
@@ -43,6 +43,8 @@ defmodule ServerComms.ReportSensors do
     Client.send(%{"unoccupied" => datetime})
     {:noreply, s}
   end
+
+  def handle_info({Client, _}, s), do: {:noreply, s}
 
   def handle_info(dunno, s) do
     Client.send(%{"unknown" => inspect(dunno)})
