@@ -69,6 +69,16 @@ defmodule ServerComms.ReportSensorsTest do
 
       assert {true, ~U[2023-07-01 09:59:59Z]} == Movement.occupation()
       assert_receive {Movement.Sensor, :occupied, ~U[2023-07-01 09:59:59Z]}
+
+      assert {:noreply, _} =
+               ReportSensors.handle_info(
+                 {MockFedecksClient,
+                  {:message, {:occupation_status, {:occupied, ~U[2023-07-01 09:58:59Z]}}}},
+                 %{}
+               )
+
+      assert {true, ~U[2023-07-01 09:58:59Z]} == Movement.occupation()
+      assert_receive {Movement.Sensor, :occupied, ~U[2023-07-01 09:58:59Z]}
     end
 
     test "when client is occupied but the server is not then the client status is re-set" do
