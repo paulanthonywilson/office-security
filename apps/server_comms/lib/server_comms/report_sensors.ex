@@ -4,7 +4,7 @@ defmodule ServerComms.ReportSensors do
   """
   use GenServer
   use ServerComms.Client
-
+  require Logger
   @name __MODULE__
 
   def start_link(opts) do
@@ -15,6 +15,7 @@ defmodule ServerComms.ReportSensors do
   def init(_) do
     Ds18b20.subscribe()
     Movement.subscribe()
+    Client.subscribe()
     {:ok, %{}}
   end
 
@@ -44,7 +45,30 @@ defmodule ServerComms.ReportSensors do
     {:noreply, s}
   end
 
-  def handle_info({Client, _}, s), do: {:noreply, s}
+  def handle_info({Client, {:message, {:occupation_status, server_status}}}, state) do
+    client_status = Movement.occupation()
+
+    case {client_status, server_status} do
+      {{false, _ts}, {:unoccupied, server_timestamp}} ->
+        Movement.set_occupied(false, server_timestamp)
+
+      {{true, client_timestamp}, {:unoccupied, _}} ->
+        Movement.set_occupied(true, client_timestamp)
+
+      {_client, {:occupied, server_timestamp}} ->
+        Movement.set_occupied(true, server_timestamp)
+
+      {{client_occupied?, client_timestamp}, :unknown} ->
+        Movement.set_occupied(client_occupied?, client_timestamp)
+    end
+
+    {:noreply, state}
+  end
+
+  def handle_info({Client, _} = message, s) do
+    Logger.info(fn -> "Message from server: #{inspect(message)}" end)
+    {:noreply, s}
+  end
 
   def handle_info(dunno, s) do
     Client.send(%{"unknown" => inspect(dunno)})

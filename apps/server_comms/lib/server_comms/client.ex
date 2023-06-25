@@ -12,4 +12,6 @@ defmodule ServerComms.Client do
       alias unquote(@implementation), as: Client
     end
   end
+
+  def child_spec(opts), do: ServerComms.RealClient.child_spec(opts)
 end

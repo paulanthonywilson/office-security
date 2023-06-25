@@ -37,4 +37,67 @@ defmodule ServerComms.ReportSensorsTest do
       end
     )
   end
+
+  describe "receiving occupation status from server" do
+    setup do
+      Movement.subscribe()
+      :ok
+    end
+
+    test "when when server is unknown, client information is re-set" do
+      Movement.set_occupied(false, ~U[2023-07-01 10:00:00Z])
+
+      assert {:noreply, _} =
+               ReportSensors.handle_info(
+                 {MockFedecksClient, {:message, {:occupation_status, :unknown}}},
+                 %{}
+               )
+
+      assert {false, ~U[2023-07-01 10:00:00Z]} == Movement.occupation()
+      assert_receive {Movement.Sensor, :unoccupied, ~U[2023-07-01 10:00:00Z]}
+    end
+
+    test "when server is occupied then client information is overwriten with sever information" do
+      Movement.set_occupied(false, ~U[2023-07-01 10:00:00Z])
+
+      assert {:noreply, _} =
+               ReportSensors.handle_info(
+                 {MockFedecksClient,
+                  {:message, {:occupation_status, {:occupied, ~U[2023-07-01 09:59:59Z]}}}},
+                 %{}
+               )
+
+      assert {true, ~U[2023-07-01 09:59:59Z]} == Movement.occupation()
+      assert_receive {Movement.Sensor, :occupied, ~U[2023-07-01 09:59:59Z]}
+    end
+
+    test "when client is occupied but the server is not then the client status is re-set" do
+      Movement.set_occupied(true, ~U[2023-07-01 10:00:00Z])
+      assert_receive {Movement.Sensor, :occupied, ~U[2023-07-01 10:00:00Z]}
+
+      assert {:noreply, _} =
+               ReportSensors.handle_info(
+                 {MockFedecksClient,
+                  {:message, {:occupation_status, {:unoccupied, ~U[2023-07-01 09:59:59Z]}}}},
+                 %{}
+               )
+
+      assert {true, ~U[2023-07-01 10:00:00Z]} == Movement.occupation()
+      assert_receive {Movement.Sensor, :occupied, ~U[2023-07-01 10:00:00Z]}
+    end
+
+    test "when both unoccupied  sets occupation status to unoccupied with the server timestamp " do
+      Movement.set_occupied(false, ~U[2023-07-01 10:00:00Z])
+
+      assert {:noreply, _} =
+               ReportSensors.handle_info(
+                 {MockFedecksClient,
+                  {:message, {:occupation_status, {:unoccupied, ~U[2023-07-01 09:59:59Z]}}}},
+                 %{}
+               )
+
+      assert {false, ~U[2023-07-01 09:59:59Z]} == Movement.occupation()
+      assert_receive {Movement.Sensor, :unoccupied, ~U[2023-07-01 09:59:59Z]}
+    end
+  end
 end
