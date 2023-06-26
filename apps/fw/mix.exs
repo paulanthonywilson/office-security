@@ -10,7 +10,7 @@ defmodule Fw.MixProject do
       app: @app,
       version: @version,
       elixir: "~> 1.9",
-      archives: [nerves_bootstrap: "~> 1.10"],
+      archives: [nerves_bootstrap: "~> 1.11"],
       deps_path: "../../deps",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -37,7 +37,7 @@ defmodule Fw.MixProject do
       # Dependencies for all targets
       {:nerves, "~> 1.10", runtime: false},
       {:shoehorn, "~> 0.9.1"},
-      {:ring_logger, "~> 0.9.0"},
+      {:ring_logger, "~> 0.9"},
       {:toolshed, "~> 0.3.0"},
 
       # Dependencies for all targets except :host
@@ -49,8 +49,8 @@ defmodule Fw.MixProject do
       # bumps to Nerves systems. Since these include Linux kernel and Erlang
       # version updates, please review their release notes in case
       # changes to your application are needed.
-      {:nerves_system_rpi, "~> 1.19", runtime: false, targets: :rpi},
-      {:nerves_system_rpi0, "~> 1.19", runtime: false, targets: :rpi0},
+      {:nerves_system_rpi, "~> 1.22.2", runtime: false, targets: :rpi},
+      {:nerves_system_rpi0, "~> 1.22.2", runtime: false, targets: :rpi0},
 
       # debug
       {:recon, "~> 2.5"},
