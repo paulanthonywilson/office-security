@@ -4,6 +4,7 @@ defmodule ServerComms.ReportSensors do
   """
   use GenServer
   use ServerComms.Client
+  alias ServerComms.CameraSend
   require Logger
   @name __MODULE__
 
@@ -63,6 +64,11 @@ defmodule ServerComms.ReportSensors do
     end
 
     {:noreply, state}
+  end
+
+  def handle_info({Client, {:message, "one-minute-cam"}}, s) do
+    CameraSend.start_sending_timed(:timer.minutes(1))
+    {:noreply, s}
   end
 
   def handle_info({Client, _} = message, s) do

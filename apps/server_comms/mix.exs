@@ -28,6 +28,7 @@ defmodule ServerComms.MixProject do
       # {:fedecks_client, "~> 0.1.2"},
       {:fedecks_client, path: "../../../fedecks_client"},
       {:ds18b20, git: "git@github.com:paulanthonywilson/ds18b20.git"},
+      {:camera, in_umbrella: true},
       {:mox, "~> 1.0", only: :test},
       {:movement, in_umbrella: true}
     ]

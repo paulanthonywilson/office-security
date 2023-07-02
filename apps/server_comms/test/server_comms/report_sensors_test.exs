@@ -110,4 +110,16 @@ defmodule ServerComms.ReportSensorsTest do
       assert_receive {Movement.Sensor, :unoccupied, ~U[2023-07-01 09:59:59Z]}
     end
   end
+
+  test "starts camera send when asked to by server" do
+    {:ok, pid} = start_supervised(ServerComms.CameraSend)
+    allow(MockFedecksClient, self(), pid)
+    test_pid = self()
+    stub(MockFedecksClient, :send_raw, fn _ -> send(test_pid, :sent) end)
+
+    assert {:noreply, _} =
+             ReportSensors.handle_info({MockFedecksClient, {:message, "one-minute-cam"}}, %{})
+
+    assert_receive :sent
+  end
 end

@@ -19,7 +19,8 @@ defmodule ServerComms.Application do
       defp children do
         [
           ServerComms.Client,
-          ServerComms.ReportSensors
+          ServerComms.ReportSensors,
+          ServerComms.CameraSend
         ]
       end
   end
