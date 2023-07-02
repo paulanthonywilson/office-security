@@ -60,6 +60,7 @@ defmodule Fw.MixProject do
       {:office_sec_web, in_umbrella: true},
       {:movement, in_umbrella: true},
       {:server_comms, in_umbrella: true},
+      {:camera, in_umbrella: true},
 
       # extracted
       {:vintage_heart, "~> 0.1.0"},
